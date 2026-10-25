@@ -32,17 +32,51 @@ NEUTRAL = "#6b6a64"
 
 # Divergente (queda ↔ crescimento) com ponto médio neutro.
 DIVERGING = ["#d95926", "#383835", "#3987e5"]
-SEQUENTIAL_BLUE = ["#184f95", "#1c5cab", "#256abf", "#2a78d6", "#3987e5",
-                   "#5598e7", "#6da7ec", "#86b6ef", "#9ec5f4"]
+# Sequencial (escuro → claro) para fundo preto: valores altos ganham mais luz.
+SEQUENTIAL_BLUE = ["#0d2340", "#104281", "#1c5cab", "#2a78d6", "#5598e7",
+                   "#86b6ef", "#b7d3f6", "#e3effd"]
 
-_registry: dict[str, str] = {}
+# Cor fixa por entidade em todo o projeto (a cor segue a entidade, nunca a posição).
+ENTITY_COLORS = {
+    "Núcleo tech": PALETTE[0],
+    "Software": PALETTE[1],
+    "Dados & Analytics": PALETTE[2],
+    "Infra & Suporte de TI": PALETTE[3],
+    "Sistemas de TI": PALETTE[6],
+    "Consultoria técnica": PALETTE[4],
+    "Telecomunicações": PALETTE[7],
+    "Setor de Informação": PALETTE[5],
+    "UE-27": PALETTE[2],
+}
+_extra: dict[str, str] = {}
+
+MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"]
 
 
 def color_for(name: str) -> str:
-    """Atribui uma cor fixa a uma entidade na ordem em que ela aparece pela 1ª vez."""
-    if name not in _registry:
-        _registry[name] = PALETTE[len(_registry) % len(PALETTE)]
-    return _registry[name]
+    """Cor da entidade; nomes não mapeados recebem a próxima cor livre da paleta."""
+    if name in ENTITY_COLORS:
+        return ENTITY_COLORS[name]
+    if name not in _extra:
+        livres = [c for c in PALETTE if c not in ENTITY_COLORS.values()] or PALETTE
+        _extra[name] = livres[len(_extra) % len(livres)]
+    return _extra[name]
+
+
+def fmt_num(v: float, decimals: int = 0) -> str:
+    """Número no padrão brasileiro: 2.969,5."""
+    txt = f"{v:,.{decimals}f}"
+    return txt.replace(",", "§").replace(".", ",").replace("§", ".")
+
+
+def fmt_month(d) -> str:
+    """Data como 'dez/2022'."""
+    return f"{MESES[d.month - 1]}/{d.year}"
+
+
+def thousands_axis(ax, axis: str = "y") -> None:
+    target = ax.yaxis if axis == "y" else ax.xaxis
+    target.set_major_formatter(lambda v, _: fmt_num(v))
 
 
 def apply() -> None:
@@ -57,7 +91,7 @@ def apply() -> None:
         "axes.titlesize": 14,
         "axes.titleweight": "bold",
         "axes.titlelocation": "left",
-        "axes.titlepad": 14,
+        "axes.titlepad": 26,
         "axes.labelsize": 10.5,
         "axes.grid": True,
         "axes.axisbelow": True,
@@ -87,7 +121,7 @@ def apply() -> None:
 
 def subtitle(ax, text: str) -> None:
     """Subtítulo em tom secundário logo abaixo do título do eixo."""
-    ax.text(0, 1.015, text, transform=ax.transAxes, color=TEXT_SECONDARY,
+    ax.text(0, 1.012, text, transform=ax.transAxes, color=TEXT_SECONDARY,
             fontsize=10, va="bottom", ha="left")
 
 
