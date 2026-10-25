@@ -20,6 +20,7 @@ FRED_SERIES = {
     "IHLIDXUS": "Indeed: índice de vagas, total (fev/2020 = 100)",
     "IHLIDXUSTPSOFTDEVE": "Indeed: índice de vagas, desenvolvimento de software",
     "IHLIDXUSTPMATH": "Indeed: índice de vagas, matemática",
+    "USREC": "Indicador de recessão NBER (1 = recessão)",
 }
 
 # Séries de emprego (CES) consideradas "núcleo tech" para a modelagem.
