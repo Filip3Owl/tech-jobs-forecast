@@ -48,8 +48,10 @@ def test_parse_jsonstat_roundtrip():
             "time": {"category": {"index": {"2020": 0, "2021": 1}}},
         },
         "value": {"0": 1.0, "1": 2.0, "3": 4.0},  # B/2020 ausente
+        "status": {"1": "b"},
     }
     df = _parse_jsonstat(payload)
     assert len(df) == 3
     assert df.set_index(["unit", "time"]).loc[("B", "2021"), "value"] == 4.0
     assert ("B", "2020") not in set(zip(df.unit, df.time))
+    assert df.set_index(["unit", "time"]).loc[("A", "2021"), "flag"] == "b"
