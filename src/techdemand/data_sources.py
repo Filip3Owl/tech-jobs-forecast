@@ -82,12 +82,15 @@ def _parse_jsonstat(payload: dict) -> pd.DataFrame:
         ordered = sorted(index, key=index.get) if isinstance(index, dict) else index
         cats.append(ordered)
     values = payload["value"]
+    # Flags de status do Eurostat: b = quebra de série, e = estimado, p = provisório...
+    status = payload.get("status", {})
     rows = []
     for flat, combo in enumerate(product(*cats)):
         v = values.get(str(flat)) if isinstance(values, dict) else values[flat]
         if v is not None:
-            rows.append((*combo, v))
-    return pd.DataFrame(rows, columns=[*dims, "value"])
+            flag = status.get(str(flat), "") if isinstance(status, dict) else status[flat] or ""
+            rows.append((*combo, v, flag))
+    return pd.DataFrame(rows, columns=[*dims, "value", "flag"])
 
 
 def fetch_eurostat_ict(refresh: bool = False) -> pd.DataFrame:

@@ -131,11 +131,11 @@ def source(fig, text: str) -> None:
              ha="left", va="top")
 
 
-def label_line_end(ax, x, y, text: str, color: str, dx: float = 0.0) -> None:
+def label_line_end(ax, x, y, text: str, color: str, dx: float = 0.0, dy: float = 0.0) -> None:
     """Rótulo direto no fim da linha (texto em tinta neutra, marcador colorido)."""
     ax.plot([x], [y], "o", color=color, markersize=6, markeredgecolor=SURFACE,
             markeredgewidth=1.5, zorder=5)
-    ax.annotate(text, (x, y), xytext=(6 + dx, 0), textcoords="offset points",
+    ax.annotate(text, (x, y), xytext=(6 + dx, dy), textcoords="offset points",
                 color=TEXT_SECONDARY, fontsize=9, va="center")
 
 
