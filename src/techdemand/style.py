@@ -79,6 +79,17 @@ def thousands_axis(ax, axis: str = "y") -> None:
     target.set_major_formatter(lambda v, _: fmt_num(v))
 
 
+def percent_axis(ax, decimals: int = 1, axis: str = "y") -> None:
+    """Eixo em % no padrão brasileiro (1,5%).
+
+    Limita os passos a 1, 2 e 5 (× 10ⁿ): o passo padrão 2,5 do matplotlib gera
+    marcas como 1,25 que, com uma casa decimal, aparecem arredondadas e repetidas.
+    """
+    target = ax.yaxis if axis == "y" else ax.xaxis
+    target.set_major_locator(mpl.ticker.MaxNLocator(steps=[1, 2, 5, 10]))
+    target.set_major_formatter(lambda v, _: f"{fmt_num(v, decimals)}%")
+
+
 def apply() -> None:
     """Aplica o tema escuro globalmente."""
     mpl.rcParams.update({
